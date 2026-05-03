@@ -15,7 +15,7 @@ function Login() {
     try {
 
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
         {
           method: "POST",
 
@@ -32,7 +32,24 @@ function Login() {
 
       const data = await response.json()
 
-      localStorage.setItem("token", data.token)
+      console.log(data)
+
+      if (!response.ok) {
+
+        alert(data.message || "Login failed")
+        return
+      }
+
+      if (!data.user || !data.token) {
+
+        alert("Invalid login response")
+        return
+      }
+
+      localStorage.setItem(
+        "token",
+        data.token
+      )
 
       localStorage.setItem(
         "user",
@@ -44,8 +61,8 @@ function Login() {
     } catch (error) {
 
       console.log(error)
-      alert("Login failed")
 
+      alert("Login failed")
     }
   }
 
@@ -67,7 +84,9 @@ function Login() {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
             className="w-full p-4 rounded-xl bg-[#0F1117] border border-[#2A2F45] text-white outline-none"
           />
 
@@ -75,7 +94,9 @@ function Login() {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) =>
+              setPassword(e.target.value)
+            }
             className="w-full p-4 rounded-xl bg-[#0F1117] border border-[#2A2F45] text-white outline-none"
           />
 

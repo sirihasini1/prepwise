@@ -18,9 +18,11 @@ function Dashboard() {
 
   const navigate = useNavigate()
 
-  const user = JSON.parse(
-    localStorage.getItem("user") || "{}"
-  )
+  const storedUser = localStorage.getItem("user")
+
+  const user = storedUser
+    ? JSON.parse(storedUser)
+    : null
 
   const normalizeScore = (score) => {
 
@@ -119,7 +121,7 @@ function Dashboard() {
     try {
 
       const response = await fetch(
-        `http://localhost:5000/api/interviews?userId=${user._id}`
+        `${import.meta.env.VITE_API_URL}/api/interviews?userId=${user._id}`
       )
 
       const data =

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import {
   generateInterviewQuestions,
   evaluateAnswers
-} from "../services/gemini"
+} from "../services/gemini.js"
 
 function Interview() {
 
@@ -59,7 +59,7 @@ function Interview() {
           difficulty
         )
 
-      setQuestions(result)
+      setQuestions(result || [])
 
       setAnswers({})
       setEvaluation(null)
@@ -119,12 +119,27 @@ function Interview() {
 
       setEvaluation(result)
 
-      const user = JSON.parse(
+      const storedUser =
         localStorage.getItem("user")
-      )
+
+      let user = null
+
+      if (
+        storedUser &&
+        storedUser !== "undefined"
+      ) {
+
+        user = JSON.parse(storedUser)
+      }
+
+      if (!user?._id) {
+
+        alert("User not found")
+        return
+      }
 
       await fetch(
-        "http://localhost:5000/api/interviews",
+        `${import.meta.env.VITE_API_URL}/api/interviews`,
         {
 
           method: "POST",
@@ -142,25 +157,25 @@ function Interview() {
             difficulty,
 
             overallScore:
-              result.overallScore,
+              result?.overallScore,
 
             communication:
-              result.communication,
+              result?.communication,
 
             technicalKnowledge:
-              result.technicalKnowledge,
+              result?.technicalKnowledge,
 
             problemSolving:
-              result.problemSolving,
+              result?.problemSolving,
 
             strengths:
-              result.strengths,
+              result?.strengths,
 
             improvements:
-              result.improvements,
+              result?.improvements,
 
             recommendation:
-              result.recommendation,
+              result?.recommendation,
 
             remainingTime:
               timeLeft,
@@ -332,8 +347,6 @@ function Interview() {
 
           <div className="mt-12 space-y-8">
 
-            {/* Score */}
-
             <div className="bg-[#151821] border border-[#232634] rounded-3xl p-8">
 
               <h2 className="text-4xl font-bold mb-6">
@@ -345,8 +358,6 @@ function Interview() {
               </div>
 
             </div>
-
-            {/* Skills */}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -389,8 +400,6 @@ function Interview() {
               </div>
 
             </div>
-
-            {/* Strengths & Improvements */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -440,8 +449,6 @@ function Interview() {
 
             </div>
 
-            {/* Recommendation */}
-
             <div className="bg-[#151821] border border-[#232634] rounded-3xl p-8">
 
               <h3 className="text-2xl font-bold mb-5">
@@ -453,8 +460,6 @@ function Interview() {
               </p>
 
             </div>
-
-            {/* Question Analysis */}
 
             <div className="space-y-6">
 
